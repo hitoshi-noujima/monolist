@@ -13,13 +13,13 @@
                 <li>
                     <div class="status-label">WANT</div>
                     <div id="want_count" class="status-value">
-                        {{ $count_want }}
+                        {{ empty($count_want) ? '0' : $count_want }}
                     </div>
                 </li>
                 <li>
                     <div class="status-label">HAVE</div>
                     <div id="have_count" class="status-value">
-                        xxx
+                        {{ empty($count_have) ? '0' : $count_have }}
                     </div>
                 </li>
             </ul>

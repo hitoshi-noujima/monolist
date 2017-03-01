@@ -22,4 +22,10 @@ class Item extends Model
     {
         return $this->users()->where('type', 'want');
     }
+    
+    //  Have のみの User 一覧を取得
+    public function have_users()
+    {
+        return $this->users()->where('type', 'have');
+    }
 }
