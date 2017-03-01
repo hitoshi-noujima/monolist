@@ -25,6 +25,9 @@ class AuthController extends Controller
     
     // 既にログインしているのに getLogin アクションにアクセスした場合などは、指定へリダイレクト
     protected $redirectTo = '/';
+    
+    // ログインページのフォームで間違った情報を送信し、ログイン失敗したときにリダイレクトされるリダイレクト先 
+    protected $loginPath = '/login';
 
     /**
      * Create a new authentication controller instance.
