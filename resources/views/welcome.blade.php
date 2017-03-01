@@ -16,5 +16,6 @@
 
 @section('content')
     {{-- ＠yield('content') に埋め込まれる --}}
-    テスト
+    @include('items.items')
+    {!! $items->render() !!}
 @endsection

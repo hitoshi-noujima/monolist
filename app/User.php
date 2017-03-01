@@ -36,4 +36,67 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+    
+    
+    // User が Want も Have も両方しているアイテム一覧を取得
+    public function items()
+    {
+        return $this->belongsToMany(Item::class)->withPivot('type')->withTimestamps();
+    }
+    
+    //  User が Want しているアイテム一覧を取得
+    public function want_items()
+    {
+        return $this->items()->where('type', 'want');
+    }
+    
+    // 中間テーブルにレコードを保存
+    public function want($itemId)
+    {
+        // 既に Want しているかの確認
+        $exist = $this->is_wanting($itemId);
+
+        if ($exist) {
+            // 既に Want していれば何もしない
+            return false;
+        } else {
+            // 未 Want であれば Want する
+            $this->items()->attach($itemId, ['type' => 'want']);
+            return true;
+        }
+    }
+    
+    // 中間テーブルにレコードを削除
+    public function dont_want($itemId)
+    {
+        // 既に Want しているかの確認
+        $exist = $this->is_wanting($itemId);
+
+        if ($exist) {
+            // 既に Want していれば Want を外す
+            // detachはtype で絞り込んで削除することができないのでSQL文
+            \DB::delete("DELETE FROM item_user WHERE user_id = ? AND item_id = ? AND type = 'want'", [\Auth::user()->id, $itemId]);
+        } else {
+            // 未 Want であれば何もしない
+            return false;
+        }
+    }
+    
+    // 既に Want しているかどうかを判定
+    public function is_wanting($itemIdOrCode)
+    {
+        // $item.id と 出力パラメータの itemCode のどちらでも判定しなければいけない
+        
+        // is_numeric() → 整数かどうかで$item.idかitemCodeを判断
+        if (is_numeric($itemIdOrCode)) {
+            // 整数であれば$item.id
+            // exists() → データがあればTrue、データが無ければFalseを返す
+            $item_id_exists = $this->want_items()->where('item_id', $itemIdOrCode)->exists();
+            return $item_id_exists;
+        } else {
+            // 整数でなければitemCode
+            $item_code_exists = $this->want_items()->where('code', $itemIdOrCode)->exists();
+            return $item_code_exists;
+        }
+    }
 }
