@@ -23,17 +23,23 @@ Route::get('login', 'Auth\AuthController@getLogin')->name('login.get');
 Route::post('login', 'Auth\AuthController@postLogin')->name('login.post');
 Route::get('logout', 'Auth\AuthController@getLogout')->name('logout.get');
 
+// ランキング
+Route::get('ranking/want', 'RankingController@want')->name('ranking.want');
+
 
 Route::group(['middleware' => 'auth'], function () {
     
     // 楽天 API を使った検索結果を表示するページ
     Route::resource('items', 'ItemsController', ['only' => ['create', 'show']]);
     
+    // Want
     Route::post('want', 'ItemUserController@want')->name('item_user.want');
     Route::delete('want', 'ItemUserController@dont_want')->name('item_user.dont_want');
     
+    // Have
     Route::post('have', 'ItemUserController@have')->name('item_user.have');
     Route::delete('have', 'ItemUserController@dont_have')->name('item_user.dont_have');
     
+    // Users
     Route::resource('users', 'UsersController', ['only' => ['show']]);
 });
